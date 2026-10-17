@@ -14,13 +14,15 @@ The tool: MANTRA_MANIFEST `tools/cloud-android/termux-emulator.sh` (`restore`, `
 | Size | 5.0 GB. Android encrypts `/data` file by file, so the disk does not compress or trim smaller |
 | Built | 16.10.2026, while testing CLAUDE_CODE_TERMUX in the cloud |
 
-By hand, if the tool is not at hand:
+Restore it with the tool (attach this repository to the session first):
 
 ```bash
-git clone --depth 1 https://github.com/markoboskoauroville/termux-emulator-image
-cd termux-emulator-image && (cd parts && sha256sum -c ../SHA256SUMS) \
-  && mkdir -p ~/.android/avd && cat parts/termux-avd.tar.zst.* | zstd -d | tar -x --sparse -C ~/.android/avd
+bash tools/cloud-android/termux-emulator.sh restore     # in a MANTRA_MANIFEST checkout
 ```
+
+**Do not `git clone` this repository** in a cloud session: one 5 GB pack through the session proxy is
+cut off after about a minute (`RPC failed`, `early EOF`). The tool fetches each piece by itself through
+the GitHub contents API, four at a time, checks `SHA256SUMS` and unpacks: 95 s in all (17.10.2026).
 
 It is x86_64: it proves installers, Termux packages, proot and Claude Code's x64 build, and nothing
 about ARM. Never put a key, token or login inside the image: Claude Code in it is **not logged in**.
